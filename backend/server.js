@@ -20,7 +20,7 @@ app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(cors({
-    origin: 'http://localhost:3000',  // Set the exact origin (frontend)
+    origin: 'https://library-attendance.netlify.app/',  // Set the exact origin (frontend)
     credentials: true                 // Allow credentials (cookies, authorization headers)
   }));
   
