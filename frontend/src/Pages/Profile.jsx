@@ -15,7 +15,7 @@ const Profile = () => {
             setLoading(true);
             try {
                 const token = Cookies.get("jwt");
-                const response = await axios.get('http://localhost:5000/profile', {
+                const response = await axios.get('https://library-attendance-system.onrender.com/profile', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

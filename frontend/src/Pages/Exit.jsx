@@ -13,7 +13,7 @@ function Exit() {
     try { // If no token is found, handle error
       
 
-      const response = await axios.post('http://localhost:5000/attendance/exit', {},{
+      const response = await axios.post('https://library-attendance-system.onrender.com/attendance/exit', {},{
         withCredentials: true,
       });
       // if (!token) {
@@ -54,10 +54,10 @@ function Exit() {
         </button>
 
         <NavLink
-          to="/login"
+          to="/logout"
           className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-6 py-3"
         >
-          Login
+          Logout
         </NavLink>
       </div>
     </div>

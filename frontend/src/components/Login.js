@@ -20,7 +20,7 @@ function Login({ setIsLoggedIn }) {
     // Validate inputs 
 
     try {
-      const response = await axios.post('http://localhost:5000/login', formData, {
+      const response = await axios.post('https://library-attendance-system.onrender.com/login', formData, {
         withCredentials: true
       });
       //console.log(response.data);
