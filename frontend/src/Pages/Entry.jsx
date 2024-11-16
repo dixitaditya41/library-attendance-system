@@ -13,10 +13,10 @@ function Entry() {
     try {
       const token = Cookies.get("jwt");
       console.log(token);
-      await axios.post('https://library-attendance-system.onrender.com/attendance/entry', {},{
+      const response = await axios.post('https://library-attendance-system.onrender.com/attendance/entry', {},{
         withCredentials: true,
       });
-      //console.log(response.data);
+      console.log(response.data);
       toast.success(`Entry Successful at ${entryTime}`);
     } catch (error) {
       console.error("Entry error:", error);

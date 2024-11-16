@@ -12,8 +12,8 @@ function Exit() {
     // Start loading state
     try { // If no token is found, handle error
       
-
-      const response = await axios.post('https://library-attendance-system.onrender.com/attendance/exit', {},{
+        const token = Cookies.get("jwt");
+        const response = await axios.post('https://library-attendance-system.onrender.com/attendance/exit', {},{
         withCredentials: true,
       });
       // if (!token) {
