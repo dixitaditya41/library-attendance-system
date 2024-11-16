@@ -11,7 +11,7 @@ function Login({ setIsLoggedIn }) {
   const [showHint, setShowHint] = useState(false);
   const [showScholarHint, setshowScholarHint] = useState(false);
 
-  const [formData, setformData] = useState({ email: "", password: "" });
+  const [formData, setformData] = useState({  scholarId: "", password: "" });
   const navigate = useNavigate(); // Initialize navigate
 
   async function submitHandler(event) {
@@ -20,9 +20,10 @@ function Login({ setIsLoggedIn }) {
     // Validate inputs 
 
     try {
-        await axios.post('https://library-attendance-system.onrender.com/login', formData, {
+      const response = await axios.post('https://library-attendance-system.onrender.com/login', formData, {
         withCredentials: true
       });
+      console.log(response.data);
       //console.log(response.data);
      // const token = response.data.token;
       //Cookies.set("jwt", token, { expires: 1 / 24 }); // Store token in cookie

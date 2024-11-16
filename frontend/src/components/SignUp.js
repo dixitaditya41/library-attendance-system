@@ -61,7 +61,7 @@ function SignUp({ setIsLoggedIn }) {
     try {
       // Make a POST request to the backend for registration
       const response = await axios.post('https://library-attendance-system.onrender.com/register', formData);
-      console.log(response.data);
+      console.log(response.data);  // Log the backend response for debugging
       setIsLoggedIn(true);
       toast.success("Account Registered Successfully");
       navigate("/login");
