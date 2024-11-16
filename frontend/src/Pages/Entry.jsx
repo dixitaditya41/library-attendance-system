@@ -13,7 +13,7 @@ function Entry() {
     try {
       const token = Cookies.get("jwt");
       console.log(token);
-      const response = await axios.post('https://library-attendance-system.onrender.com/attendance/entry', {},{
+      await axios.post('https://library-attendance-system.onrender.com/attendance/entry', {},{
         withCredentials: true,
       });
       //console.log(response.data);

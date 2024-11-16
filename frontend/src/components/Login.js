@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaInfoCircle } from "react-icons/fa";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import Cookies from "js-cookie";
+
 
 function Login({ setIsLoggedIn }) {
 
@@ -20,7 +20,7 @@ function Login({ setIsLoggedIn }) {
     // Validate inputs 
 
     try {
-      const response = await axios.post('https://library-attendance-system.onrender.com/login', formData, {
+        await axios.post('https://library-attendance-system.onrender.com/login', formData, {
         withCredentials: true
       });
       //console.log(response.data);

@@ -10,14 +10,14 @@ import Exit from './Pages/Exit';
 function App() {
 
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [isLoggedIn , setIsLoggedIn] = useState(false);
+   
   return (
     <div className="w-screen h-screen">
 
       <Routes>
 
-        <Route path="/" element={<Home setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/" element={<Home isLoggedin ={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/entry" element={<Entry setIsLoggedIn={setIsLoggedIn} />} />
