@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import axios from 'axios';
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 function Exit() {
   const [loading, setLoading] = useState(false);
