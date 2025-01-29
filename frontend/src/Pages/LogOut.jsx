@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 const Logout = () => {
   const handleLogout = () => {
     // Clear the token from localStorage
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
     
     // Optionally, you can add a toast message to confirm logout
     toast.success("You have successfully logged out.");
