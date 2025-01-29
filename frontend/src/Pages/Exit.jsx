@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import axios from 'axios';
 import { toast } from "react-toastify";
 import apiService from "../apiService";
 
@@ -51,8 +50,7 @@ function Exit() {
         <NavLink
           to="/logout"
           className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-6 py-3"
-        >
-          Logout
+        > Logout
         </NavLink>
       </div>
     </div>
