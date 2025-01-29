@@ -21,7 +21,4 @@ router.get("/profile",authenticate,profileRoute)
 
 
 
-
-
-
 module.exports = router;

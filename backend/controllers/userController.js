@@ -4,23 +4,27 @@ const {asyncHandler} = require("../middlewares/asyncHandler");
 const moment = require('moment');
 
 
-const registerRoute = asyncHandler(async(req,res) => {
-    const { scholarId, password, name ,branch} = req.body;
-    if(!scholarId || !name || !password ||!branch){
-        throw new Error("Please fill out all the inputs");
+const registerRoute = asyncHandler(async (req, res) => {
+    const { scholarId, password, name, branch } = req.body;
+
+    if (!scholarId || !name || !password || !branch) {
+        return res.status(400).json({ error: "Please fill out all the inputs" });
     }
+
     try {
-        const newUser = new User({ scholarId, password, name ,branch});
+        const newUser = new User({ scholarId, password, name, branch });
         await newUser.save();
-        res.status(201).json({ message: "Registration Successful", user: {
-            scholarId: newUser.scholarId,
-            name: newUser.name,
-            branch: newUser.branch
-        }});
+
+        res.status(201).json({ 
+            message: "Registration Successful", 
+            user: { scholarId: newUser.scholarId, name: newUser.name, branch: newUser.branch } 
+        });
+
     } catch (e) {
-        res.status(500).json({ message: "Registration Failed" });
+        console.error("Registration Error:", e);  
+        res.status(500).json({ message: "Registration Failed", error: e.message });
     }
-})
+});
 
 const loginRoute= asyncHandler(async (req, res) => {
     const { scholarId, password } = req.body;

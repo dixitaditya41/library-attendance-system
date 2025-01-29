@@ -5,7 +5,7 @@ async function mongoDbConnect() {
     
 
     try {
-        await mongoose.connect(process.env.MONGO_URL, { // Us
+        await mongoose.connect(process.env.MONGO_URL, { 
         });
         console.log("MongoDB Connected");
     } catch (err) {

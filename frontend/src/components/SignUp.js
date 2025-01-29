@@ -31,7 +31,7 @@ function SignUp({ setIsLoggedIn }) {
 
   async function submitHandler(event) {
     event.preventDefault();
-    console.log("Button is clicked!")
+    //console.log("Button is clicked!")
 
     if (!/^\d+$/.test(formData.scholarId)) {
       alert("Scholar Id should be numeric only");

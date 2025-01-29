@@ -16,21 +16,18 @@ function Login({ setIsLoggedIn }) {
 
   async function submitHandler(event) {
     event.preventDefault();
-
-    // Validate inputs 
-
+  
     try {
-      const response = await axios.post('https://library-attendance-system.onrender.com/login', formData, {
-        withCredentials: true
-      });
-      console.log(response.data);
-      //console.log(response.data);
-     // const token = response.data.token;
-      //Cookies.set("jwt", token, { expires: 1 / 24 }); // Store token in cookie
-      // localStorage.setItem('authToken', token); // Store token in localStorage
-      setIsLoggedIn(true);
-      toast.success("Logged In");
-      navigate("/entry");
+      const response = await axios.post("https://library-attendance-system.onrender.com/login", formData);
+      console.log(response);
+      const token = response.data.token;
+
+      if (token) {
+        localStorage.setItem("authToken", token); // Store token in localStorage
+        setIsLoggedIn(true);
+        toast.success("Logged In");
+        navigate("/entry");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Login failed. Please check your credentials.");

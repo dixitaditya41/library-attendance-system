@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import axios from 'axios';
+import apiService from "../apiService";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
+
 
 function Entry() {
   const [loading, setLoading] = useState(false);
@@ -11,20 +11,15 @@ function Entry() {
   const handleEntry = async () => {
     setLoading(true); // Start loading state
     try {
-      const token = Cookies.get("jwt");
-      console.log(token);
-      const response = await axios.post('https://library-attendance-system.onrender.com/attendance/entry', {},{
-        withCredentials: true,
-      });
-      console.log(response.data);
+      const response = await apiService.post('/attendance/entry'); // Use apiService for the request
+      console.log(response);
       toast.success(`Entry Successful at ${entryTime}`);
     } catch (error) {
       console.error("Entry error:", error);
       toast.error("Entry failed. Please try again.");
+    } finally {
+      setLoading(false); // End loading state
     }
-    // } finally {
-    //   setLoading(false); // End loading state
-    // }
   };
 
   return (

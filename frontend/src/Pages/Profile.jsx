@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
 import Cookies from "js-cookie";
+import apiService from "../apiService";
 
 Chart.register(...registerables);
 
@@ -14,13 +15,8 @@ const Profile = () => {
         const fetchMetrics = async () => {
             setLoading(true);
             try {
-                const token = Cookies.get("jwt");
-                const response = await axios.get('https://library-attendance-system.onrender.com/profile', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    withCredentials: true,
-                });
+            
+                const response = await apiService.get('/profile')
                 setMetrics(response.data.metrics);
             } catch (error) {
                 console.error("Error fetching profile metrics:", error);

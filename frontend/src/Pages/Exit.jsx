@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import axios from 'axios';
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
+import apiService from "../apiService";
+
 
 function Exit() {
   const [loading, setLoading] = useState(false);
@@ -13,15 +14,9 @@ function Exit() {
     // Start loading state
     try { // If no token is found, handle error
       
-        const token = Cookies.get("jwt");
-        const response = await axios.post('https://library-attendance-system.onrender.com/attendance/exit', {},{
-        withCredentials: true,
-      });
-      // if (!token) {
-      //   toast.error("Authorization token is missing. Please log in.");
-      //   setLoading(false);
-      //   return;
-      // }
+      
+        const response = await apiService.post('/attendance/exit');
+    
       console.log(response.data);
       toast.success(`Exit Successful at ${exitTime}`);
     }  catch (error) {
@@ -50,8 +45,7 @@ function Exit() {
           onClick={handleExit} // Call handleExit on button click
           disabled={loading} // Disable button while loading
           className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-6 py-3"
-        >
-          {loading ? "Marking Exit..." : "Mark Attendance Exit"}
+        >  {loading ? "Marking Exit..." : "Mark Attendance Exit"}
         </button>
 
         <NavLink
