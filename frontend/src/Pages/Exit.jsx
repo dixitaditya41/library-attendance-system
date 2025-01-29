@@ -24,6 +24,14 @@ function Exit() {
     } 
   };
 
+  const handleLogout = () => {
+    // Clear the token from localStorage
+    localStorage.removeItem('authToken');
+    
+    // Optionally, you can add a toast message to confirm logout
+    toast.success("You have successfully logged out.");
+  };
+
   return (
     <div className="flex flex-col justify-center items-center w-screen h-screen bg-gray-100 px-4">
       
@@ -60,8 +68,14 @@ function Exit() {
           to="/logout"
           className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg w-full py-3 text-center"
         >
-          Logout
+        <button
+          onClick={handleLogout}
+        >
+          Log Out
+        </button>
         </NavLink>
+
+        
       </div>
     </div>
   );  

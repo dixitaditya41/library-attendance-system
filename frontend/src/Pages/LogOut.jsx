@@ -3,13 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const Logout = () => {
-  const handleLogout = () => {
-    // Clear the token from localStorage
-    localStorage.removeItem('authToken');
-    
-    // Optionally, you can add a toast message to confirm logout
-    toast.success("You have successfully logged out.");
-  };
+ 
 
   return (
     <div className="flex flex-col justify-center items-center w-screen h-screen bg-gray-100 px-4">
@@ -30,13 +24,7 @@ const Logout = () => {
           Log in again
         </NavLink>
         
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg w-full py-3 text-center"
-        >
-          Log Out
-        </button>
+
       </div>
     </div>
   );
