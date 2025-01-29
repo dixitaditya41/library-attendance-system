@@ -85,56 +85,76 @@ const Profile = () => {
     };
 
     return (
-        <div className="bg-white p-8 rounded-lg shadow-lg max-w-6xl mx-auto">
-            {/* Header Section with Grid Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                {/* Left side - Title */}
-                <div className="flex items-center justify-center md:justify-start">
-                    <h1 className="text-3xl font-bold text-blue-900">User Profile Metrics</h1>
-                </div>
-                
-                {/* Right side - Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                        <h2 className="text-sm text-blue-600 mb-1">Today's Time</h2>
-                        <p className="text-2xl font-bold text-blue-900">{metrics.todaysTime}h</p>
-                    </div>
-                    <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                        <h2 className="text-sm text-blue-600 mb-1">Week Avg</h2>
-                        <p className="text-2xl font-bold text-blue-900">{metrics.currentWeekAvgTime}h</p>
-                    </div>
-                    <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                        <h2 className="text-sm text-blue-600 mb-1">Month Avg</h2>
-                        <p className="text-2xl font-bold text-blue-900">{metrics.currentMonthAvgTime}h</p>
-                    </div>
-                </div>
+        <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg max-w-6xl w-full mx-auto">
+          
+          {/* Header Section with Grid Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            
+            {/* Left side - Title */}
+            <div className="flex items-center justify-center md:justify-start">
+              <h1 className="text-2xl sm:text-3xl font-bold text-blue-900">
+                User Profile Metrics
+              </h1>
             </div>
-
-            {/* Charts Section */}
-            <div className="grid gap-8">
-                <div>
-                    <h3 className="text-xl font-semibold text-blue-900 mb-4">Last 5 Days</h3>
-                    <div className="h-64">
-                        <Bar data={last5DaysData} options={chartOptions} />
-                    </div>
-                </div>
-
-                <div>
-                    <h3 className="text-xl font-semibold text-blue-900 mb-4">Last 5 Weeks</h3>
-                    <div className="h-64">
-                        <Bar data={previous5WeeksData} options={chartOptions} />
-                    </div>
-                </div>
-
-                <div>
-                    <h3 className="text-xl font-semibold text-blue-900 mb-4">Last 3 Months</h3>
-                    <div className="h-64">
-                        <Bar data={previous3MonthsData} options={chartOptions} />
-                    </div>
-                </div>
+            
+            {/* Right side - Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+              <div className="bg-blue-50 p-4 rounded-lg shadow-sm text-center">
+                <h2 className="text-sm text-blue-600 mb-1">Today's Time</h2>
+                <p className="text-xl sm:text-2xl font-bold text-blue-900">
+                  {metrics.todaysTime}h
+                </p>
+              </div>
+              <div className="bg-blue-50 p-4 rounded-lg shadow-sm text-center">
+                <h2 className="text-sm text-blue-600 mb-1">Week Avg</h2>
+                <p className="text-xl sm:text-2xl font-bold text-blue-900">
+                  {metrics.currentWeekAvgTime}h
+                </p>
+              </div>
+              <div className="bg-blue-50 p-4 rounded-lg shadow-sm text-center">
+                <h2 className="text-sm text-blue-600 mb-1">Month Avg</h2>
+                <p className="text-xl sm:text-2xl font-bold text-blue-900">
+                  {metrics.currentMonthAvgTime}h
+                </p>
+              </div>
             </div>
+          </div>
+      
+          {/* Charts Section */}
+          <div className="grid gap-6">
+            
+            {/* Last 5 Days Chart */}
+            <div>
+              <h3 className="text-lg sm:text-xl font-semibold text-blue-900 mb-4">
+                Last 5 Days
+              </h3>
+              <div className="h-64 w-full">
+                <Bar data={last5DaysData} options={chartOptions} />
+              </div>
+            </div>
+      
+            {/* Last 5 Weeks Chart */}
+            <div>
+              <h3 className="text-lg sm:text-xl font-semibold text-blue-900 mb-4">
+                Last 5 Weeks
+              </h3>
+              <div className="h-64 w-full">
+                <Bar data={previous5WeeksData} options={chartOptions} />
+              </div>
+            </div>
+      
+            {/* Last 3 Months Chart */}
+            <div>
+              <h3 className="text-lg sm:text-xl font-semibold text-blue-900 mb-4">
+                Last 3 Months
+              </h3>
+              <div className="h-64 w-full">
+                <Bar data={previous3MonthsData} options={chartOptions} />
+              </div>
+            </div>
+            
+          </div>
         </div>
-    );
-};
-
+      );
+    };
 export default Profile;

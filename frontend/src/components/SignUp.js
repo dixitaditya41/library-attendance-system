@@ -72,20 +72,26 @@ function SignUp({ setIsLoggedIn }) {
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center m-4 p-2">
-      <h1 className="text-3xl font-semibold mb-14 text-blue-600">
+    <div className="w-screen h-screen flex flex-col justify-center items-center px-4 py-2">
+      <h1 className="text-2xl sm:text-3xl font-semibold mb-8 text-blue-600">
         Library Registration
       </h1>
-      <form onSubmit={submitHandler} className="flex flex-col justify-center items-center border shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)] rounded-xl pt-1">
-        <label className='font-medium'>
+  
+      <form
+        onSubmit={submitHandler}
+        className="flex flex-col justify-center items-center border shadow-lg rounded-xl px-6 py-8 w-full max-w-md"
+      >
+        {/* Scholar ID Field */}
+        <label className="font-medium w-full">
           <div
             className="relative flex flex-row items-center gap-2"
             onMouseEnter={() => setshowScholarHint(true)}
             onMouseLeave={() => setshowScholarHint(false)}
-          >Enter ScholarId
+          >
+            Enter ScholarId
             <FaInfoCircle className="cursor-pointer" />
             {showScholarHint && (
-              <div className="absolute bottom-[-40px] left-[-50px] w-48 bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg">
+              <div className="absolute top-8 left-0 w-48 bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg">
                 Enter 10 digit Scholar Id in numeric 0-9
               </div>
             )}
@@ -96,28 +102,34 @@ function SignUp({ setIsLoggedIn }) {
           name="scholarId"
           onChange={changeHandler}
           placeholder="Enter Scholar Number"
-          className="border px-20 py-3 m-3"
-          required={true}
+          className="border px-4 py-2 m-2 w-full rounded-md"
+          required
         />
-        <label className="font-medium">Enter Name</label>
+  
+        {/* Name Field */}
+        <label className="font-medium w-full">Enter Name</label>
         <input
           type="text"
           name="name"
           onChange={changeHandler}
           placeholder="Enter Full Name"
-          className="border px-20 py-3 m-3"
-          required={true}
+          className="border px-4 py-2 m-2 w-full rounded-md"
+          required
         />
-        <label className="font-medium">Enter Branch</label>
+  
+        {/* Branch Field */}
+        <label className="font-medium w-full">Enter Branch</label>
         <input
           type="text"
           name="branch"
           onChange={changeHandler}
           placeholder="Enter Full Branch Name"
-          className="border px-20 py-3 m-3"
-          required={true}
+          className="border px-4 py-2 m-2 w-full rounded-md"
+          required
         />
-        <label className="flex justify-center items-center gap-2 font-medium">
+  
+        {/* Password Field */}
+        <label className="flex justify-start items-center gap-2 font-medium w-full">
           Enter Password
           <div
             className="relative flex items-center"
@@ -126,7 +138,7 @@ function SignUp({ setIsLoggedIn }) {
           >
             <FaInfoCircle className="cursor-pointer" />
             {showHint && (
-              <div className="absolute bottom-[-40px] left-[-50px] w-48 bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg">
+              <div className="absolute top-8 left-0 w-48 bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg">
                 Enter 4 numeric digits only
               </div>
             )}
@@ -136,25 +148,28 @@ function SignUp({ setIsLoggedIn }) {
           type="password"
           name="password"
           onChange={changeHandler}
-          required={true}
+          required
           placeholder="Enter Password"
-          className="border px-20 py-3 m-3"
+          className="border px-4 py-2 m-2 w-full rounded-md"
         />
+  
+        {/* Submit Button */}
         <button
           type="submit"
-          className="border px-20 py-3 m-3 bg-blue-600 text-white font-semibold text-lg"
+          className="border px-6 py-2 mt-4 bg-blue-600 text-white font-semibold text-lg w-full rounded-md hover:bg-blue-700 transition"
         >
           Submit
         </button>
       </form>
-
-      <div>
+  
+      {/* Already a member Button */}
+      <div className="mt-4 w-full max-w-md">
         <NavLink to={"/login"}>
-          <button className="border px-20 py-3 m-3 bg-blue-600 text-white font-semibold text-lg">Already a member</button>
+          <button className="border px-6 py-2 bg-blue-600 text-white font-semibold text-lg w-full rounded-md hover:bg-blue-700 transition">
+            Already a member
+          </button>
         </NavLink>
       </div>
     </div>
-  );
-}
-
+  );}
 export default SignUp;
