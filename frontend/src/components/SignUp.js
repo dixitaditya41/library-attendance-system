@@ -76,7 +76,7 @@ function SignUp({ setIsLoggedIn }) {
       <h1 className="text-2xl sm:text-3xl font-semibold mb-8 text-blue-600">
         Library Registration
       </h1>
-  
+
       <form
         onSubmit={submitHandler}
         className="flex flex-col justify-center items-center border shadow-lg rounded-xl px-6 py-8 w-full max-w-md"
@@ -105,7 +105,7 @@ function SignUp({ setIsLoggedIn }) {
           className="border px-4 py-2 m-2 w-full rounded-md"
           required
         />
-  
+
         {/* Name Field */}
         <label className="font-medium w-full">Enter Name</label>
         <input
@@ -116,18 +116,31 @@ function SignUp({ setIsLoggedIn }) {
           className="border px-4 py-2 m-2 w-full rounded-md"
           required
         />
-  
+
         {/* Branch Field */}
-        <label className="font-medium w-full">Enter Branch</label>
-        <input
-          type="text"
+        <label className="font-medium w-full text-lg mb-2">Select Branch</label>
+        <select
           name="branch"
           onChange={changeHandler}
-          placeholder="Enter Full Branch Name"
-          className="border px-4 py-2 m-2 w-full rounded-md"
+          className="border px-4 py-2 m-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
-        />
-  
+          style={{
+            maxHeight: '200px',  // Adjust height as needed
+            overflowY: 'auto',  // Enable vertical scrolling
+          }}
+        >
+          <option value="" disabled selected>
+            Select Branch
+          </option>
+          <option value="MCA">MCA</option>
+          <option value="MDS">MDS</option>
+          <option value="MBA">MBA</option>
+          <option value="Btech">Btech</option>
+          <option value="B.Arch">B.Arch</option>
+          <option value="Mtech">Mtech</option>
+        </select>
+
+
         {/* Password Field */}
         <label className="flex justify-start items-center gap-2 font-medium w-full">
           Enter Password
@@ -152,7 +165,7 @@ function SignUp({ setIsLoggedIn }) {
           placeholder="Enter Password"
           className="border px-4 py-2 m-2 w-full rounded-md"
         />
-  
+
         {/* Submit Button */}
         <button
           type="submit"
@@ -161,7 +174,7 @@ function SignUp({ setIsLoggedIn }) {
           Submit
         </button>
       </form>
-  
+
       {/* Already a member Button */}
       <div className="mt-4 w-full max-w-md">
         <NavLink to={"/login"}>
@@ -171,5 +184,6 @@ function SignUp({ setIsLoggedIn }) {
         </NavLink>
       </div>
     </div>
-  );}
+  );
+}
 export default SignUp;
