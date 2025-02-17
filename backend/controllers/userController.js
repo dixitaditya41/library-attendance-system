@@ -5,19 +5,19 @@ const moment = require('moment');
 
 
 const registerRoute = asyncHandler(async (req, res) => {
-    const { scholarId, password, name, branch } = req.body;
+    const { scholarId, password, name, branch ,memberType , institute} = req.body;
 
-    if (!scholarId || !name || !password || !branch) {
+    if (!scholarId || !name || !password || !branch || !memberType || !institute) {
         return res.status(400).json({ error: "Please fill out all the inputs" });
     }
 
     try {
-        const newUser = new User({ scholarId, password, name, branch });
+        const newUser = new User({ scholarId, password, name, branch ,memberType ,institute });
         await newUser.save();
 
         res.status(201).json({ 
             message: "Registration Successful", 
-            user: { scholarId: newUser.scholarId, name: newUser.name, branch: newUser.branch } 
+            user: { scholarId: newUser.scholarId, name: newUser.name, branch: newUser.branch ,member:newUser.memberType ,college: newUser.institute} 
         });
 
     } catch (e) {

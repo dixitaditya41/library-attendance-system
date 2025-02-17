@@ -4,21 +4,19 @@ import { toast } from "react-toastify";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-
 function SignUp({ setIsLoggedIn }) {
-
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   const [showHint, setShowHint] = useState(false);
   const [showScholarHint, setshowScholarHint] = useState(false);
 
   const [formData, setFormData] = useState({
-
     scholarId: "",
     name: "",
     password: "",
     branch: "",
-
+    memberType: "",
+    institute: "",
   });
 
   function changeHandler(event) {
@@ -28,71 +26,89 @@ function SignUp({ setIsLoggedIn }) {
     }));
   }
 
-
   async function submitHandler(event) {
     event.preventDefault();
-    //console.log("Button is clicked!")
 
-    if (!/^\d+$/.test(formData.scholarId)) {
-      alert("Scholar Id should be numeric only");
+    if (!/^\d{10}$/.test(formData.scholarId)) {
+      alert("Scholar ID must be 10 digits");
       return;
     }
 
-    if (formData.scholarId.length !== 10) {
-      alert("Scholar Id should be 10 digits");
+    if (!/^\d{4}$/.test(formData.password)) {
+      alert("Password must be 4 numeric digits");
       return;
     }
 
-    if (!/^\d+$/.test(formData.password)) {
-      alert("Password should be numeric only");
-      return;
-    }
-
-    if (formData.password.length !== 4) {
-      alert("Password should be 4 digits");
-      return;
-    }
-
-    if (formData.name.length === 0) {
+    if (!formData.name.trim()) {
       alert("Name cannot be empty");
       return;
     }
 
     try {
-      // Make a POST request to the backend for registration
-      const response = await axios.post('https://library-attendance-system.onrender.com/register', formData);
-      console.log(response.data);  // Log the backend response for debugging
+      const response = await axios.post(
+        "https://library-attendance-system.onrender.com/register",
+        formData
+      );
+      console.log(response.data);
       setIsLoggedIn(true);
-      toast.success("Account Registered Successfully");
+      toast.success("Registered successfully");
       navigate("/login");
     } catch (error) {
-      console.error("Error during registration:", error);
-      toast.error("Failed to register");
+      console.error("Registration error:", error);
+      toast.error("Registration failed");
     }
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center px-4 py-2">
-      <h1 className="text-2xl sm:text-3xl font-semibold mb-8 text-blue-600">
+    <div className="w-screen h-screen flex flex-col justify-center items-center px-5 py-3">
+      <h1 className="text-2xl font-semibold mb-6 text-blue-600">
         Library Registration
       </h1>
 
       <form
         onSubmit={submitHandler}
-        className="flex flex-col justify-center items-center border shadow-lg rounded-xl px-6 py-8 w-full max-w-md"
+        className="flex flex-col border shadow-lg rounded-lg px-6 py-6 w-full max-w-md"
       >
-        {/* Scholar ID Field */}
-        <label className="font-medium w-full">
+        <label className="text-base">Member Type</label>
+        <select
+          name="memberType"
+          onChange={changeHandler}
+          className="border px-4 py-2 mb-3 rounded-md focus:ring-2 focus:ring-blue-500"
+          required
+        >
+          <option value="" disabled selected>
+            Select Type
+          </option>
+          <option value="Student">Student</option>
+          <option value="Faculty">Faculty</option>
+          <option value="Staff">Staff</option>
+        </select>
+
+        <label className="text-base">Institute</label>
+        <select
+          name="institute"
+          onChange={changeHandler}
+          className="border px-4 py-2 mb-3 rounded-md focus:ring-2 focus:ring-blue-500"
+          required
+        >
+          <option value="" disabled selected>
+            Select Institute
+          </option>
+          <option value="MANIT">MANIT</option>
+          <option value="IIIT">IIIT</option>
+        </select>
+
+        <label className="text-base flex items-center gap-2">
+          Scholar ID
           <div
-            className="relative flex flex-row items-center gap-2"
+            className="relative"
             onMouseEnter={() => setshowScholarHint(true)}
             onMouseLeave={() => setshowScholarHint(false)}
           >
-            Enter ScholarId
-            <FaInfoCircle className="cursor-pointer" />
+            <FaInfoCircle className="text-gray-500 text-sm cursor-pointer" />
             {showScholarHint && (
-              <div className="absolute top-8 left-0 w-48 bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg">
-                Enter 10 digit Scholar Id in numeric 0-9
+              <div className="absolute top-7 left-0 w-48 bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg">
+                Enter 10-digit Scholar ID
               </div>
             )}
           </div>
@@ -101,33 +117,27 @@ function SignUp({ setIsLoggedIn }) {
           type="text"
           name="scholarId"
           onChange={changeHandler}
-          placeholder="Enter Scholar Number"
-          className="border px-4 py-2 m-2 w-full rounded-md"
+          placeholder="Scholar ID"
+          className="border px-4 py-2 mb-3 rounded-md"
           required
         />
 
-        {/* Name Field */}
-        <label className="font-medium w-full">Enter Name</label>
+        <label className="text-base">Full Name</label>
         <input
           type="text"
           name="name"
           onChange={changeHandler}
-          placeholder="Enter Full Name"
-          className="border px-4 py-2 m-2 w-full rounded-md"
+          placeholder="Your Name"
+          className="border px-4 py-2 mb-3 rounded-md"
           required
         />
 
-        {/* Branch Field */}
-        <label className="font-medium w-full text-lg mb-2">Select Branch</label>
+        <label className="text-base">Branch</label>
         <select
           name="branch"
           onChange={changeHandler}
-          className="border px-4 py-2 m-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border px-4 py-2 mb-3 rounded-md focus:ring-2 focus:ring-blue-500"
           required
-          style={{
-            maxHeight: '200px',  // Adjust height as needed
-            overflowY: 'auto',  // Enable vertical scrolling
-          }}
         >
           <option value="" disabled selected>
             Select Branch
@@ -140,19 +150,17 @@ function SignUp({ setIsLoggedIn }) {
           <option value="Mtech">Mtech</option>
         </select>
 
-
-        {/* Password Field */}
-        <label className="flex justify-start items-center gap-2 font-medium w-full">
-          Enter Password
+        <label className="text-base flex items-center gap-2">
+          Password
           <div
-            className="relative flex items-center"
+            className="relative"
             onMouseEnter={() => setShowHint(true)}
             onMouseLeave={() => setShowHint(false)}
           >
-            <FaInfoCircle className="cursor-pointer" />
+            <FaInfoCircle className="text-gray-500 text-sm cursor-pointer" />
             {showHint && (
-              <div className="absolute top-8 left-0 w-48 bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg">
-                Enter 4 numeric digits only
+              <div className="absolute top-7 left-0 w-48 bg-gray-700 text-white text-xs rounded-md p-2 shadow-lg">
+                Enter 4 numeric digits
               </div>
             )}
           </div>
@@ -161,29 +169,28 @@ function SignUp({ setIsLoggedIn }) {
           type="password"
           name="password"
           onChange={changeHandler}
+          placeholder="Password"
+          className="border px-4 py-2 mb-3 rounded-md"
           required
-          placeholder="Enter Password"
-          className="border px-4 py-2 m-2 w-full rounded-md"
         />
 
-        {/* Submit Button */}
         <button
           type="submit"
-          className="border px-6 py-2 mt-4 bg-blue-600 text-white font-semibold text-lg w-full rounded-md hover:bg-blue-700 transition"
+          className="border px-6 py-3 mt-4 bg-blue-600 text-white text-base font-semibold rounded-md hover:bg-blue-700 transition"
         >
-          Submit
+          Register
         </button>
       </form>
 
-      {/* Already a member Button */}
       <div className="mt-4 w-full max-w-md">
         <NavLink to={"/login"}>
-          <button className="border px-6 py-2 bg-blue-600 text-white font-semibold text-lg w-full rounded-md hover:bg-blue-700 transition">
-            Already a member
+          <button className="border px-6 py-3 bg-blue-600 text-white text-base font-semibold w-full rounded-md hover:bg-blue-700 transition">
+            Already a member? Login
           </button>
         </NavLink>
       </div>
     </div>
   );
 }
+
 export default SignUp;
