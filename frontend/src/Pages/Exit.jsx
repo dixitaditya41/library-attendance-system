@@ -3,33 +3,32 @@ import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiService from "../apiService";
 
+
 function Exit() {
   const [loading, setLoading] = useState(false);
-  const [hasMarkedExit, setHasMarkedExit] = useState(false);
-  const exitTime = new Date().toLocaleTimeString();
+  const exitTime = new Date().toLocaleTimeString(); // Format the time
 
   const handleExit = async () => {
-    setLoading(true);
-    try {
-      const response = await apiService.post('/attendance/exit');
+    setLoading(true); 
+    // Start loading state
+    try { // If no token is found, handle error
+      
+      
+        const response = await apiService.post('/attendance/exit');
+    
       console.log(response.data);
       toast.success(`Exit Successful at ${exitTime}`);
-      setHasMarkedExit(true); // Set state to true after successful exit
-    } catch (error) {
+    }  catch (error) {
       console.error("Exit error:", error);
       toast.error("Exit failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
-  const handleLogout = (e) => {
-    if (!hasMarkedExit) {
-      e.preventDefault(); // Prevent navigation
-      toast.error("Mark exit first before logging out!");
-      return;
-    }
+  const handleLogout = () => {
+    // Clear the token from localStorage
     localStorage.removeItem('authToken');
+    
+    // Optionally, you can add a toast message to confirm logout
     toast.success("You have successfully logged out.");
   };
 
@@ -52,16 +51,16 @@ function Exit() {
         
         {/* Exit Message */}
         <span className="text-2xl sm:text-4xl font-semibold text-center">
-        {hasMarkedExit ? `Exit Successful at ${exitTime}` : "Mark your exit first"}
+          {`Exit Successful at ${exitTime}`}
         </span>
   
         {/* Mark Attendance Exit Button */}
         <button
           onClick={handleExit} 
-          disabled={loading || hasMarkedExit}
+          disabled={loading}
           className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg w-full py-3 disabled:opacity-50"
         >
-           {loading ? "Marking Exit..." : hasMarkedExit ? "Exit Marked" : "Mark Attendance Exit"}
+          {loading ? "Marking Exit..." : "Mark Attendance Exit"}
         </button>
   
         {/* Logout Button */}
@@ -69,10 +68,14 @@ function Exit() {
           to="/logout"
           className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg w-full py-3 text-center"
         >
-        <button onClick={handleLogout}>
+        <button
+          onClick={handleLogout}
+        >
           Log Out
         </button>
         </NavLink>
+
+        
       </div>
     </div>
   );  
