@@ -15,7 +15,6 @@ const Profile = () => {
         const fetchMetrics = async () => {
             setLoading(true);
             try {
-            
                 const response = await apiService.get('/profile')
                 setMetrics(response.data.metrics);
             } catch (error) {
@@ -27,6 +26,10 @@ const Profile = () => {
 
         fetchMetrics();
     }, []);
+
+    const handleGoBack = () => {
+        window.history.back();
+    };
 
     if (loading) {
         return <div className="text-center text-blue-500">Loading...</div>;
@@ -86,6 +89,29 @@ const Profile = () => {
 
     return (
         <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg max-w-6xl w-full mx-auto">
+          {/* Back Button */}
+          <div className="mb-6">
+            <button 
+              onClick={handleGoBack}
+              className="flex items-center text-blue-600 hover:text-blue-800 transition-colors font-medium"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5 mr-1" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18" 
+                />
+              </svg>
+              Back
+            </button>
+          </div>
           
           {/* Header Section with Grid Layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">

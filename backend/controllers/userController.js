@@ -1,66 +1,97 @@
 const User = require('../models/userModel');
 const createToken = require("../utills/createToken");
-const {asyncHandler} = require("../middlewares/asyncHandler");
+const { asyncHandler } = require("../middlewares/asyncHandler");
 const moment = require('moment');
 
 
 const registerRoute = asyncHandler(async (req, res) => {
-    const { scholarId, password, name, branch ,memberType , institute} = req.body;
+    const { scholarId, password, name, branch, memberType, programType, institute } = req.body;
 
     if (!scholarId || !name || !password || !branch || !memberType || !institute) {
         return res.status(400).json({ error: "Please fill out all the inputs" });
     }
 
+    if (memberType === "Student" && !programType) {
+        return res.status(400).json({ error: "Program type is required for students" });
+    }
+
+    const existingUser = await User.findOne({ scholarId });
+    if (existingUser) {
+        return res.status(400).json({ error: "User already exists" });
+    }
+
     try {
-        const newUser = new User({ scholarId, password, name, branch ,memberType ,institute });
+        const newUser = new User({ scholarId, password, name, branch, memberType, programType, institute });
         await newUser.save();
 
-        res.status(201).json({ 
-            message: "Registration Successful", 
-            user: { scholarId: newUser.scholarId, name: newUser.name, branch: newUser.branch ,member:newUser.memberType ,college: newUser.institute} 
+        res.status(201).json({
+            message: "Registration Successful",
+            user: {
+                scholarId: newUser.scholarId,
+                name: newUser.name,
+                branch: newUser.branch,
+                member: newUser.memberType,
+                college: newUser.institute,
+                ...(newUser.memberType === "Student" && { program: newUser.programType })
+            }
         });
 
     } catch (e) {
-        console.error("Registration Error:", e);  
+        console.error("Registration Error:", e);
         res.status(500).json({ message: "Registration Failed", error: e.message });
     }
 });
 
-const loginRoute= asyncHandler(async (req, res) => {
+const loginRoute = asyncHandler(async (req, res) => {
     const { scholarId, password } = req.body;
 
     try {
-        const user = await User.findOne({ scholarId, password });
-        if (user) {
-             // console.log(user);
-             const token = createToken(res,user._id);      
-             res.status(200).json({
-                message: "Login Successful",
-                token, // Include the token in the response
-               });
-               
-        } else {
-            res.status(400).json({ message: "Login Failed" });
+        const user = await User.findOne({ scholarId });
+        if (!user) {
+            return res.status(400).json({ message: "Login Failed" });
         }
+
+        const isPasswordValid = await user.isPasswordCorrect(password);
+
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: "Login Failed" });
+        }
+
+        const token = createToken(res, user._id);
+        res.status(200).json({
+            message: "Login Successful",
+            token,
+            isAdmin: user.isAdmin,
+             // Include the token in the response
+        });
+
     } catch (e) {
         res.status(500).json({ message: "Login Failed" });
     }
 })
 
 
-const attendanceEntryRoute = asyncHandler(async(req, res) => {
+const attendanceEntryRoute = asyncHandler(async (req, res) => {
     try {
-        const user = req.user; // Use the authenticated user
+        const user = req.user;
+        const lastAttendance = user.attendance[user.attendance.length - 1];
+
+        // Ensure a new entry is only recorded if the last action was an exit
+        if (lastAttendance && !lastAttendance.exitTime) {
+            return res.status(400).json({ message: "Cannot enter without exiting previous session" });
+        }
+
         user.attendance.push({ entryTime: Date.now() });
         await user.save();
         res.status(200).json({ message: "Attendance entry successful" });
     } catch (e) {
         res.status(500).json({ message: "Attendance Failed" });
     }
-})
+});
 
 
-const attendanceExitRoute = asyncHandler(async(req, res) => {
+
+const attendanceExitRoute = asyncHandler(async (req, res) => {
     try {
         const user = req.user; // Use the authenticated user
         const lastAttendance = user.attendance[user.attendance.length - 1];
@@ -78,95 +109,65 @@ const attendanceExitRoute = asyncHandler(async(req, res) => {
 
 const profileRoute = asyncHandler(async (req, res) => {
     try {
-        const user = req.user; // Assuming user is authenticated and fetched in middleware
-        
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+        const user = req.user;
+        if (!user) return res.status(404).json({ message: "User not found" });
 
-        // Get user's attendance data
         const attendanceRecords = user.attendance;
-
-        // Variables for calculating time
-        let todaysTime = 0; 
-        const last5DaysTotalTime = Array(5).fill(0); // Total time for the last 5 days
-        const previous5WeeksTotalTime = Array(5).fill(0); // Total time for the last 5 weeks
-        const previous3MonthsTotalTime = Array(3).fill(0); // Total time for the last 3 months
+        let todaysTime = 0;
+        const last5DaysTotalTime = Array(5).fill(0);
+        const previous5WeeksTotalTime = Array(5).fill(0);
+        const previous3MonthsTotalTime = Array(3).fill(0);
 
         const today = moment().startOf('day');
-        const last5DaysStart = moment().subtract(4, 'days').startOf('day'); // Start date for the last 5 days
-        const weekStartDates = Array.from({ length: 5 }, (_, i) => moment().subtract(i, 'weeks').startOf('isoWeek')); // Start dates for the last 5 weeks
-        const monthStartDates = Array.from({ length: 3 }, (_, i) => moment().subtract(i, 'months').startOf('month')); // Start dates for the last 3 months
+        const last5DaysStart = moment().clone().subtract(4, 'days').startOf('day');
+        const weekStartDates = Array.from({ length: 5 }, (_, i) => moment().clone().subtract(i, 'weeks').startOf('isoWeek'));
+        const monthStartDates = Array.from({ length: 3 }, (_, i) => moment().clone().subtract(i, 'months').startOf('month'));
 
-        // Variables for average calculation
-        let currentWeekTotalTime = 0;
-        let currentWeekCount = 0;
-        let currentMonthTotalTime = 0;
-        let currentMonthCount = 0;
+        let currentWeekTotalTime = 0, currentWeekCount = 0;
+        let currentMonthTotalTime = 0, currentMonthCount = 0;
 
         attendanceRecords.forEach(record => {
             const entryTime = moment(record.entryTime);
             const exitTime = moment(record.exitTime);
-            const duration = moment.duration(exitTime.diff(entryTime)).asHours(); // Duration in hours
+            const duration = moment.duration(exitTime.diff(entryTime)).asHours();
 
-            // Calculate today's time
-            if (entryTime.isSame(today, 'day')) {
-                todaysTime += duration;
-            }
+            if (entryTime.isSame(today, 'day')) todaysTime += duration;
 
-            // Calculate total time for the last 5 days
-            if (entryTime.isSameOrAfter(last5DaysStart)) {
-                const dayIndex = moment().diff(entryTime, 'days'); // Get the index for the last 5 days
-                if (dayIndex >= 0 && dayIndex < 5) {
-                    last5DaysTotalTime[dayIndex] += duration; // Accumulate time for that day
-                }
-            }
+            const dayIndex = entryTime.diff(last5DaysStart, 'days');
+            if (dayIndex >= 0 && dayIndex < 5) last5DaysTotalTime[dayIndex] += duration;
 
-            // Calculate total time for the previous 5 weeks
             weekStartDates.forEach((startDate, index) => {
-                const endDate = moment(startDate).add(6, 'days'); // End of the week
-                if (entryTime.isBetween(startDate, endDate, null, '[]')) {
-                    previous5WeeksTotalTime[index] += duration; // Accumulate time for that week
+                if (entryTime.isBetween(startDate, moment(startDate).add(6, 'days'), null, '[]')) {
+                    previous5WeeksTotalTime[index] += duration;
                 }
             });
 
-            // Calculate total time for the previous 3 months
             monthStartDates.forEach((startDate, index) => {
-                const endDate = moment(startDate).endOf('month'); // End of the month
-                if (entryTime.isBetween(startDate, endDate, null, '[]')) {
-                    previous3MonthsTotalTime[index] += duration; // Accumulate time for that month
+                if (entryTime.isBetween(startDate, moment(startDate).endOf('month'), null, '[]')) {
+                    previous3MonthsTotalTime[index] += duration;
                 }
             });
 
-            // Calculate current week total time and count
-            const currentWeekStart = moment().startOf('isoWeek'); // Start of the current week
-            if (entryTime.isSameOrAfter(currentWeekStart)) {
+            if (entryTime.isSameOrAfter(moment().startOf('isoWeek'))) {
                 currentWeekTotalTime += duration;
                 currentWeekCount++;
             }
 
-            // Calculate current month total time and count
-            const currentMonthStart = moment().startOf('month'); // Start of the current month
-            if (entryTime.isSameOrAfter(currentMonthStart)) {
+            if (entryTime.isSameOrAfter(moment().startOf('month'))) {
                 currentMonthTotalTime += duration;
                 currentMonthCount++;
             }
         });
 
-        // Calculate averages
-        const currentWeekAvgTime = currentWeekCount > 0 ? (currentWeekTotalTime / currentWeekCount) : 0;
-        const currentMonthAvgTime = currentMonthCount > 0 ? (currentMonthTotalTime / currentMonthCount) : 0;
-
-        // Return metrics
         res.status(200).json({
             user,
             metrics: {
-                todaysTime: todaysTime.toFixed(2),
-                last5DaysTotalTime: last5DaysTotalTime.map(time => time.toFixed(2)), // Total time for each day in the last 5 days
-                previous5WeeksTotalTime: previous5WeeksTotalTime.map(time => time.toFixed(2)), // Total time for each week in the last 5 weeks
-                previous3MonthsTotalTime: previous3MonthsTotalTime.map(time => time.toFixed(2)), // Total time for each month in the last 3 months
-                currentWeekAvgTime: currentWeekAvgTime.toFixed(2), // Average time for the current week
-                currentMonthAvgTime: currentMonthAvgTime.toFixed(2), // Average time for the current month
+                todaysTime: Number(todaysTime.toFixed(2)),
+                last5DaysTotalTime: last5DaysTotalTime.map(time => Number(time.toFixed(2))),
+                previous5WeeksTotalTime: previous5WeeksTotalTime.map(time => Number(time.toFixed(2))),
+                previous3MonthsTotalTime: previous3MonthsTotalTime.map(time => Number(time.toFixed(2))),
+                currentWeekAvgTime: Number((currentWeekCount > 0 ? currentWeekTotalTime / currentWeekCount : 0).toFixed(2)),
+                currentMonthAvgTime: Number((currentMonthCount > 0 ? currentMonthTotalTime / currentMonthCount : 0).toFixed(2))
             }
         });
     } catch (error) {
@@ -175,4 +176,5 @@ const profileRoute = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { registerRoute, loginRoute ,attendanceEntryRoute, attendanceExitRoute,profileRoute};
+
+module.exports = { registerRoute, loginRoute, attendanceEntryRoute, attendanceExitRoute, profileRoute };

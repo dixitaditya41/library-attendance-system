@@ -7,16 +7,12 @@ const router = express.Router();
 
 router.post('/register', registerRoute);
 router.post('/login', loginRoute);
-router.get('/logout',authenticate,(req,res)=>{
-    res.status(200).json({message:"Logout Successful"});
-})
+
 
 //attendance-log
 router.post("/attendance/entry",authenticate,attendanceEntryRoute);
 router.post("/attendance/exit",authenticate,attendanceExitRoute);
 router.get("/profile",authenticate,profileRoute)
-
-//admin-routes
 
 
 

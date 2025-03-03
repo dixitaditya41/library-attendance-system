@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { NavLink, useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiService from "../apiService";
 
 function SignUp({ setIsLoggedIn }) {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ function SignUp({ setIsLoggedIn }) {
     branch: "",
     memberType: "",
     institute: "",
+    programType: "",
   });
 
   function changeHandler(event) {
@@ -45,10 +46,7 @@ function SignUp({ setIsLoggedIn }) {
     }
 
     try {
-      const response = await axios.post(
-        "https://library-attendance-system.onrender.com/register",
-        formData
-      );
+      const response = await apiService.post("/register", formData);
       console.log(response.data);
       setIsLoggedIn(true);
       toast.success("Registered successfully");
@@ -83,6 +81,25 @@ function SignUp({ setIsLoggedIn }) {
           <option value="Faculty">Faculty</option>
           <option value="Staff">Staff</option>
         </select>
+
+        {formData.memberType === "Student" && (
+          <>
+            <label className="text-base">Program Type</label>
+            <select
+              name="programType"
+              onChange={changeHandler}
+              className="border px-4 py-2 mb-3 rounded-md focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="" disabled selected>
+                Select Program
+              </option>
+              <option value="UG">UG</option>
+              <option value="PG">PG</option>
+              <option value="PhD">PhD</option>
+            </select>
+          </>
+        )}
 
         <label className="text-base">Institute</label>
         <select

@@ -2,37 +2,43 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { FaInfoCircle } from "react-icons/fa";
-import axios from "axios";
+import apiService from "../apiService";
 import { NavLink } from "react-router-dom";
 
-
 function Login({ setIsLoggedIn }) {
-
   const [showHint, setShowHint] = useState(false);
   const [showScholarHint, setshowScholarHint] = useState(false);
-
-  const [formData, setformData] = useState({  scholarId: "", password: "" });
-  const navigate = useNavigate(); // Initialize navigate
+  const [formData, setformData] = useState({ scholarId: "", password: "" });
+  const navigate = useNavigate();
 
   async function submitHandler(event) {
     event.preventDefault();
-  
+
     try {
-      const response = await axios.post("https://library-attendance-system.onrender.com/login", formData);
-      console.log(response);
-      const token = response.data.token;
+      const response = await apiService.post("/login", formData);
+  
+
+      const { token, isAdmin } = response.data; // Extract token and isAdmin
 
       if (token) {
-        localStorage.setItem("authToken", token); // Store token in localStorage
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("isAdmin", isAdmin); // Store isAdmin status
+
         setIsLoggedIn(true);
         toast.success("Logged In");
-        navigate("/entry");
+
+        if (isAdmin) {
+          navigate("/admin-dashboard"); // Redirect to admin dashboard
+        } else {
+          navigate("/entry"); // Redirect to normal user page
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Login failed. Please check your credentials.");
     }
   }
+
   function changeHandler(event) {
     setformData((prevData) => ({
       ...prevData,
@@ -45,7 +51,7 @@ function Login({ setIsLoggedIn }) {
       <h1 className="text-2xl sm:text-3xl font-semibold mb-8 text-blue-600">
         Library Login
       </h1>
-  
+
       <form
         onSubmit={submitHandler}
         className="flex flex-col justify-center items-center border shadow-lg rounded-xl px-6 py-8 w-full max-w-md"
@@ -74,7 +80,7 @@ function Login({ setIsLoggedIn }) {
           onChange={changeHandler}
           className="border px-4 py-2 m-2 w-full rounded-md"
         />
-  
+
         {/* Password Field */}
         <label className="flex justify-start items-center gap-2 font-medium w-full">
           Enter Password
@@ -99,7 +105,7 @@ function Login({ setIsLoggedIn }) {
           onChange={changeHandler}
           className="border px-4 py-2 m-2 w-full rounded-md"
         />
-  
+
         {/* Submit Button */}
         <button
           type="submit"
@@ -108,7 +114,7 @@ function Login({ setIsLoggedIn }) {
           Submit
         </button>
       </form>
-  
+
       {/* Sign Up Button */}
       <div className="mt-4 w-full max-w-md">
         <NavLink to={"/"}>
@@ -118,6 +124,7 @@ function Login({ setIsLoggedIn }) {
         </NavLink>
       </div>
     </div>
-  );}
+  );
+}
 
 export default Login;

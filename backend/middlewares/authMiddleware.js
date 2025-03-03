@@ -24,12 +24,4 @@ const authenticate = asyncHandler(async (req, res, next) => {
     }
 });
 
-const authorizeAdmin = (req, res, next) => {
-    if (req.user && req.user.isAdmin) {
-        next();
-    } else {
-        res.status(401).send("Not authorized as admin");
-    }
-};
-
-module.exports = { authenticate, authorizeAdmin };
+module.exports = { authenticate };
