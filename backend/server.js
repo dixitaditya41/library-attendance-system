@@ -21,8 +21,7 @@ app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(cors({
-    //origin: 'https://library-attendance-system.vercel.app' || 'http://localhost:3000',  // Set the exact origin (frontend)
-    origin:  'http://localhost:3000',
+    origin: 'https://library-attendance-system.vercel.app' || 'http://localhost:3000',  // Set the exact origin (frontend)
     credentials: true                 // Allow credentials (cookies, authorization headers)
   }));
   
