@@ -1,49 +1,62 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiService from "../apiService";
 import { useNavigate } from "react-router-dom";
-
 function Exit() {
   const [loading, setLoading] = useState(false);
   const [hasMarkedExit, setHasMarkedExit] = useState(false);
-  const exitTime = new Date().toLocaleTimeString(); // Format the time
+  const exitTime = new Date().toLocaleTimeString();
   const navigate = useNavigate();
+  
+  // Load the exit status from localStorage when component mounts
+  useEffect(() => {
+    const exitStatus = localStorage.getItem('hasMarkedExit');
+    if (exitStatus === 'true') {
+      setHasMarkedExit(true);
+    }
+    
+    // Check if entry was marked
+    const entryStatus = localStorage.getItem('hasMarkedEntry');
+    if (entryStatus !== 'true') {
+      // If entry wasn't marked, redirect to entry page
+      toast.error("You must mark entry before accessing the exit page");
+      navigate("/entry");
+    }
+  }, [navigate]);
 
   const handleExit = async () => {
     setLoading(true);
-    // Start loading state
-    try { // If no token is found, handle error
-
-
+    try {
       const response = await apiService.post('/attendance/exit');
       setHasMarkedExit(true);
+      // Save the exit status to localStorage
+      localStorage.setItem('hasMarkedExit', 'true');
       console.log(response.data);
       toast.success(`Exit Successful at ${exitTime}`);
     } catch (error) {
       console.error("Exit error:", error);
       toast.error("Exit failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleLogout =  (e) => {
-
+  const handleLogout = (e) => {
     if (!hasMarkedExit) {
-      e.preventDefault(); // Prevent navigation
+      e.preventDefault();
       toast.error("Mark exit first before logging out!");
       return;
     }
     
-    // Clear the token from localStorage
+    // Clear the token and attendance states from localStorage
     localStorage.removeItem('authToken');
-   
-
-    // Optionally, you can add a toast message to confirm logout
+    localStorage.removeItem('hasMarkedEntry');
+    localStorage.removeItem('hasMarkedExit');
+    
     toast.success("You have successfully logged out.");
-
     navigate("/logout");
   };
-
   return (
     <div className="flex flex-col justify-center items-center w-screen h-screen bg-gray-100 px-4">
 

@@ -1,23 +1,31 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { NavLink } from "react-router-dom";
 import apiService from "../apiService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";;
 
 function Entry() {
+  // Check localStorage on component mount to see if entry was already marked
   const [loading, setLoading] = useState(false);
-  const[hasMarkedEntry,setHasMarkedEntry] = useState(false);
-  const entryTime = new Date().toLocaleTimeString(); // Format the time
-
+  const [hasMarkedEntry, setHasMarkedEntry] = useState(false);
+  const entryTime = new Date().toLocaleTimeString();
+  const navigate = useNavigate();
   
-  const navigate = useNavigate(); // Initialize navigate
+  // Load the entry status from localStorage when component mounts
+  useEffect(() => {
+    const entryStatus = localStorage.getItem('hasMarkedEntry');
+    if (entryStatus === 'true') {
+      setHasMarkedEntry(true);
+    }
+  }, []);
 
   const handleEntry = async () => {
-    setLoading(true); // Start loading state
+    setLoading(true);
     try {
-      const response = await apiService.post('/attendance/entry'); // Use apiService for the request
+      const response = await apiService.post('/attendance/entry');
       setHasMarkedEntry(true);
-      console.log(hasMarkedEntry);
+      // Save the entry status to localStorage
+      localStorage.setItem('hasMarkedEntry', 'true');
       console.log(response);
       toast.success(`Entry Successful at ${entryTime}`);
     } catch (error) {
@@ -28,20 +36,16 @@ function Entry() {
     }
   };
 
-  
-  const handleExitOnEntry =(e)=>{
-
+  const handleExitOnEntry = (e) => {
     if (!hasMarkedEntry) {
-      e.preventDefault(); // Prevent navigation
+      e.preventDefault();
       toast.error("Mark entry first before Exit");
       return;
+    } else {
+      navigate("/exit");
+      toast.success("You have successfully marked your entry");
     }
-   else
-   {
-    navigate("/exit");
-    toast.success("You have successfully marked your entry");
-   }
-  }
+  };
 
   return (
     <div className="flex flex-col justify-center items-center w-screen h-screen bg-gray-100 px-4">
